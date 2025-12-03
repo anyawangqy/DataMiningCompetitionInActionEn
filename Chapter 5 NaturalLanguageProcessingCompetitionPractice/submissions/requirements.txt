@@ -1,0 +1,5 @@
+pandas==1.3.4
+roformer==0.4.3
+scikit-learn
+seqeval==1.2.2
+transformers==4.21.0
