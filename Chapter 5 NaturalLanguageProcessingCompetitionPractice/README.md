@@ -4,46 +4,48 @@ https://github.com/SereTOD/SereTOD2022/tree/main/Track1
 
 ## Data download
 
-1. 官方训练数据集（包括有标签数据和无标签数据）、验证数据集、测试数据集均通过以下链接下载，并保存于input文件夹下。
+1. The official training dataset (including labeled and unlabeled data), validation dataset, and test dataset are all available for download at the following links and are saved in the `input` folder.
+
 ```
 https://www.kaggle.com/datasets/yankuoaaagmailcom/seretod2022
 ```
 
 ## Data preparation
 
-1. 纠正训练数据集
+1. Corrected Training Dataset
 ```
 python input/correct_train.py
 ```
-2. 验证数据集格式转化
+2. Validation Dataset Format Conversion
 ```
 python input/dev_conver.py
 ```
-3. 训练数据集和验证数据集合并、分折
+3. Merging and Splitting the Training and Validation Datasets
 ```
 python input/split_fold_train_dev.py
 ```
 
-## 预训练(mlm)
+## Pretraining(mlm)
 
-1. 预训练数据准备
+1. Pretraining Data Preparation
 ```
 python lm/create_lm_data_v2.py
 ```
-2. 开始预训练
+2. Start pretraining
 ```
-#使用DeBERTa模型做预训练
+#Use the DeBERTa model for pretraining.
 python lm/deberta_base_lm_512_v2.py
-#使用roformer模型做预训练
+#Use the roformer model for pretraining.
 python lm/deberta_base_lm_512_v1.py
 
-# RoBERTa、MacBERT、NEZHA模型预训练需要修改deberta_base_lm_512_v2.py文件的模型类别及输出路径。
-RoBERTa预训练过程修改参数：MODEL_DIR:"hfl/chinese-roberta-wwm-ext";TrainConfig.output_dir:'../pretrain_model/roberta'
-MacBERT预训练过程修改参数：MODEL_DIR:"hfl/chinese-macbert-base";TrainConfig.output_dir:'../pretrain_model/macbert'
-NEZHA预训练过程修改参数：MODEL_DIR:"sijunhe/nezha-base-wwm";TrainConfig.output_dir:'../pretrain_model/nezha'
+
+# When pretraining RoBERTa, MacBERT, or NEZHA models, modify the model class and output path in deberta_base_lm_512_v2.py.
+During RoBERTa pretraining, set/configure the MODEL_DIR parameter:"hfl/chinese-roberta-wwm-ext";TrainConfig.output_dir:'../pretrain_model/roberta'
+During MacBERT pretraining, set/configure the MODEL_DIR parameter:"hfl/chinese-macbert-base";TrainConfig.output_dir:'../pretrain_model/macbert'
+During NEZHA   pretraining, set/configure the MODEL_DIR parameter:"sijunhe/nezha-base-wwm";TrainConfig.output_dir:'../pretrain_model/nezha'
 ```
 
-最后预训练模型均保存于pretrain_model文件夹下。
+The final pretrained models are all saved in the pretrain_model folder.
 ```
 ├── pretrain_model
 │   ├── deberta
@@ -54,48 +56,48 @@ NEZHA预训练过程修改参数：MODEL_DIR:"sijunhe/nezha-base-wwm";TrainConfi
 ```
 
 
-## 训练
+## train
 
-1.实体抽取
+1.Entity extraction
 
 ```
-# roformer、macbert、deberta、nezha模型需执行train_ee.py训练脚本，在训练前需修改预训练模型路径。
-(roformer训练过程修改参数:CFG.model:"../../pretrain_model/roformer";OUTPUT_DIR:'../../output_model/ee/roformer/'
-deberta训练过程修改参数:CFG.model:"../../pretrain_model/deberta";OUTPUT_DIR:'../../output_model/ee/deberta/'
-macbert训练过程修改参数:CFG.model:"../../pretrain_model/macbert";OUTPUT_DIR:'../../output_model/ee/macbert/'
-nezha训练过程修改参数:CFG.model:"../../pretrain_model/nezha";OUTPUT_DIR:'../../output_model/ee/nezha/')
+# roformer、macbert、deberta、nezha models need to run the train_ee.py script，Before training, modify the pretrained model path.
+(During roformer training, modify the parameter CFG.model:"../../pretrain_model/roformer";OUTPUT_DIR:'../../output_model/ee/roformer/'
+During  deberta  training, modify the parameter CFG.model:"../../pretrain_model/deberta";OUTPUT_DIR:'../../output_model/ee/deberta/'
+During  macbert  training, modify the parameter CFG.model: "../../pretrain_model/macbert";OUTPUT_DIR:'../../output_model/ee/macbert/'
+During  nezha    training, modify the parameter CFG.model:"../../pretrain_model/nezha";OUTPUT_DIR:'../../output_model/ee/nezha/')
 python train/entity-extraction/train_ee.py
 
-# roberta模型需执行train_effcient.py训练脚本。
+# the roberta  model need to run the train_effcient.py script.
 python entity-extraction/train_efficient.py
 ```
 
-2.实体共指解析
+2.Entity coreference resolution
 
 ```
 cd train/entity-coreference
 CUDA_VISIBLE_DEVICES=$1 python main.py config.yaml 
 ```
 
-3.槽位提取
+3.Slot extraction
 
 ```
-# roformer、macbert、nezha、roberta模型需执行train_ef.py训练脚本，在训练前需修改预训练模型路径。
-(roformer训练过程修改参数:CFG.model:"../../pretrain_model/roformer";OUTPUT_DIR:'../../output_model/sf/roformer/'
-roberta训练过程修改参数:CFG.model:"../../pretrain_model/roberta";OUTPUT_DIR:'../../output_model/sf/roberta/'
-macbert训练过程修改参数:CFG.model:"../../pretrain_model/macbert";OUTPUT_DIR:'../../output_model/sf/macbert/'
-nezha训练过程修改参数:CFG.model:"../../pretrain_model/nezha";OUTPUT_DIR:'../../output_model/sf/nezha/')
+# roformer、macbert、nezha、roberta  models need to run the train_ef.py script，Before training, modify the pretrained model path.
+(During roformer training, modify the parameter CFG.model:"../../pretrain_model/roformer";OUTPUT_DIR:'../../output_model/sf/roformer/'
+During  roberta training, modify the parameter  CFG.model:"../../pretrain_model/roberta";OUTPUT_DIR:'../../output_model/sf/roberta/'
+During  macbert training, modify the parameter  CFG.model:"../../pretrain_model/macbert";OUTPUT_DIR:'../../output_model/sf/macbert/'
+During  nezha training, modify the parameter  CFG.model:"../../pretrain_model/nezha";OUTPUT_DIR:'../../output_model/sf/nezha/')
 python train/slot-filling/train_ef.py
 ```
 
-4.实体槽位对齐
+4.Entity-slot alignment
 
 ```
 cd train/entity-slot-alignment
 CUDA_VISIBLE_DEVICES=$1 python main.py config.yaml 
 ```
 
-## 预测提交
+## Prediction Submission
 
 
 ```
